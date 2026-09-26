@@ -19,9 +19,11 @@ public:
   void process(juce::AudioBuffer<float>& buffer) noexcept {
     // for each frame
     for (const auto frameIndex : std::views::iota(0, buffer.getNumSamples())) {
-      //Generate the LFO value
+      // Generate the LFO value
       const auto lfoValue = lfo.processSample(0.f);
-      // TODO: calculate the modulation value
+      // calculate the modulation value
+      constexpr auto modulationDepth = 0.4f;
+      const auto modulationValue = modulationDepth + lfoValue + 1.f;
 
       // for each channel sample in the frame
       for (const auto channelIndex :
@@ -30,7 +32,7 @@ public:
         const auto inputSample = buffer.getSample(channelIndex, frameIndex);
 
         // modulate the sample
-        const auto outputSample = 0.1f * lfoValue;
+        const auto outputSample = inputSample * modulationValue;
 
         // set the output sample
         buffer.setSample(channelIndex, frameIndex, outputSample);
